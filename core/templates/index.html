@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="nots">
+        {% for notification in user.notifications.all %}
+            <li>{{notification.title}} : {{notification.content}} : {{notification.created_at}}</li>
+        {% endfor %}
+    </ul>
+    <script>
+        var endpoint = '/ws/notifications/';
+        var socket = new WebSocket('ws://' + window.location.host + endpoint);
+    
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            document.getElementById('nots').innerHTML += `<li> ${data.title} : ${data.content} : ${data.created_at} </li>`;
+        };
+    
+        socket.onopen = function(event) {
+            console.log('open', event);
+        };
+    
+        socket.onerror = function(event) {
+            console.log('error', event);
+        };
+    
+        socket.onclose = function(event) {
+            console.log('closed', event);
+        };
+    </script>
+    
+</body>
+</html>
